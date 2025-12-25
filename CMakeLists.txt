@@ -18,8 +18,9 @@ endif()
 
 
 find_package(spdlog REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 add_executable(${PROJECT_NAME} Src/main.cpp)
 
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
-
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)

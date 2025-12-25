@@ -1,21 +1,20 @@
-#include "spdlog/common.h"
+#include<fstream>
 #include <spdlog/spdlog.h>
+#include <nlohmann/json.hpp>
 
 int main()
 {
-    spdlog::set_level(spdlog::level::err);
-    spdlog::info("Hello, World!");
-    spdlog::error("Error message");
-    spdlog::warn("Warning message");
-    spdlog::critical("Critical message");
-    spdlog::debug("Debug message");
-    spdlog::trace("Trace message");
+    try{
+        std::ifstream configFile("../../Src/test.json");
+        nlohmann::json config = nlohmann::json::parse(configFile);
+        configFile.close();
+        spdlog::info("json load success");
 
-
-    spdlog::warn("Warning message");
-    spdlog::critical("Critical message");
-    spdlog::debug("Debug message");
-    spdlog::trace("Trace message");
-
+        std::string gameName = config["game"]["name"].get<std::string>();
+        spdlog::info("gameName: {}", gameName);
+    }catch(const std::exception& e){
+        spdlog::error("Error: {}", e.what());
+        return -1;
+    }
     return 0;
 }
