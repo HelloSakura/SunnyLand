@@ -1,0 +1,87 @@
+// .vscode/settings.json
+{
+    // ========== clangd 配置 ==========
+    "clangd.enabled": true,
+    "clangd.path": "clangd",  // 如果 clangd 不在 PATH，用完整路径
+    
+    // clangd 参数（重要配置）
+    "clangd.arguments": [
+        "--background-index",           // 后台索引
+        "--compile-commands-dir=${workspaceFolder}/Build",  // 编译命令目录
+        "--completion-style=detailed",  // 详细补全
+        "--header-insertion=iwyu",      // 自动插入头文件
+        "--header-insertion-decorators", // 头文件装饰器
+        "--clang-tidy",                 // 启用 clang-tidy
+        "--all-scopes-completion",      // 全作用域补全
+        "--cross-file-rename",          // 跨文件重命名
+        "--pch-storage=disk",           // 预编译头存储
+        "--log=verbose",                // 调试时使用
+        "--pretty"                      // 美化输出
+    ],
+    
+    // 性能优化
+    "clangd.fallbackFlags": [
+        "-std=c++20",
+        "-IC:/Library/spdlog/include",
+        "-DWIN32",
+        "-D_WINDOWS",
+        "-DSPDLOG_WCHAR_TO_UTF8_SUPPORT",
+        "-DSPDLOG_COMPILED_LIB"
+    ],
+    
+    // ========== 禁用 Microsoft C++ 扩展 ==========
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.autocomplete": "disabled",
+    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.formatting": "disabled",
+    "C_Cpp.enhancedColorization": "disabled",
+    
+    // ========== 编辑器集成 ==========
+    // 使用 clangd 提供的功能
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": false
+    },
+    
+    // 代码操作
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    
+    // ========== 文件关联 ==========
+    "files.associations": {
+        "*.h": "c",
+        "*.hpp": "cpp",
+        "*.hxx": "cpp",
+        "*.inc": "cpp",
+        "*.inl": "cpp",
+        "*.ipp": "cpp",
+        "*.tcc": "cpp",
+        "*.cu": "cpp",
+        "*.cuh": "cpp"
+    },
+    
+    // ========== 其他优化 ==========
+    // 禁用重复功能的其他扩展
+    "C_Cpp.codeAnalysis.clangTidy.enabled": false,
+    "C_Cpp.codeAnalysis.runAutomatically": false,
+    
+    // 文件排除提升性能
+    "files.watcherExclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/__pycache__": true
+    },
+    
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/build": true
+    }
+}
