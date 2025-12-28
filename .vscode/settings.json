@@ -21,9 +21,13 @@
     
     // 性能优化
     "clangd.fallbackFlags": [
-        "-std=c++20",
+        "-std=c++17",
+        "-I${workspaceFolder}/src",
+        "-I${workspaceFolder}/src/engine/core",
+        "-I${workspaceFolder}/src/engine/utils",
         "-IC:/Library/spdlog/include",
         "-IC:/Library/nlohmann/include",
+        "-IC:/Library/SDL3/include",
         "-DWIN32",
         "-D_WINDOWS",
         "-DSPDLOG_WCHAR_TO_UTF8_SUPPORT",
@@ -56,7 +60,7 @@
     
     // ========== 文件关联 ==========
     "files.associations": {
-        "*.h": "c",
+        "*.h": "cpp",           // C++ 头文件使用 cpp 语法高亮
         "*.hpp": "cpp",
         "*.hxx": "cpp",
         "*.inc": "cpp",
@@ -64,7 +68,41 @@
         "*.ipp": "cpp",
         "*.tcc": "cpp",
         "*.cu": "cpp",
-        "*.cuh": "cpp"
+        "*.cuh": "cpp",
+        "game_app.h": "cpp",     // 特定文件关联
+        "**/engine/**/*.h": "cpp"  // engine 目录下的头文件
+    },
+    
+    // ========== 语法高亮增强 ==========
+    "editor.semanticHighlighting.enabled": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    
+    // clangd 语法高亮配置
+    "clangd.semanticTokens": true,
+    
+    // 确保 C++ 关键字高亮（包括 namespace, class, public, private 等）
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "keyword.control.c++",
+                "settings": {
+                    "foreground": "#C586C0"
+                }
+            },
+            {
+                "scope": "storage.type.c++",
+                "settings": {
+                    "foreground": "#4EC9B0"
+                }
+            },
+            {
+                "scope": "entity.name.namespace",
+                "settings": {
+                    "foreground": "#4EC9B0"
+                }
+            }
+        ]
     },
     
     // ========== 其他优化 ==========

@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(SunnyLand)
 
+# 设置 C++ 标准为 C++17（支持嵌套命名空间定义等特性）
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # 生成 compile_commands.json 用于 IDE 支持
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -19,12 +24,41 @@ endif()
 
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(SDL3 REQUIRED)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+# 收集所有源文件
+file(GLOB_RECURSE SOURCES 
+    "src/*.cpp"
+    "src/*.h"
+)
+
+add_executable(${PROJECT_NAME} 
+    src/main.cpp
+    src/engine/core/game_app.cpp
+    src/engine/core/game_app.h
+    src/engine/utils/logger_util.cpp
+    src/engine/utils/logger_util.h
+)
+
+# 设置目标 C++ 标准
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
+
+# 设置 include 目录
+# 1. 添加 src 目录，支持 "engine/xxx/xxx.h" 这样的路径
+# 2. 添加各个子目录，支持直接使用文件名（如 "game_app.h"）
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/utils
+)
 
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
-
+target_link_libraries(${PROJECT_NAME} SDL3::SDL3)
 
 # 文件末尾添加
 if(NOT TARGET clean-all)
