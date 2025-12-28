@@ -5,7 +5,7 @@
 int main()
 {
     try{
-        std::ifstream configFile("../../Src/test.json");
+        std::ifstream configFile("../../ src/test.json");
         nlohmann::json config = nlohmann::json::parse(configFile);
         configFile.close();
         spdlog::info("json load success");

@@ -7,7 +7,7 @@
     // clangd 参数（重要配置）
     "clangd.arguments": [
         "--background-index",           // 后台索引
-        "--compile-commands-dir=${workspaceFolder}/Build",  // 编译命令目录
+        "--compile-commands-dir=${workspaceFolder}/build",  // 编译命令目录
         "--completion-style=detailed",  // 详细补全
         "--header-insertion=iwyu",      // 自动插入头文件
         "--header-insertion-decorators", // 头文件装饰器

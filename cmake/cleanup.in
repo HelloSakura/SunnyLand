@@ -1,0 +1,12 @@
+#!/bin/bash
+# 清理脚本 - 由 CMake 自动生成
+# 构建目录: @CMAKE_BINARY_DIR@
+
+echo "正在清理构建目录: @CMAKE_BINARY_DIR@"
+echo "警告: 这将删除所有构建文件!"
+
+# 删除构建目录
+rm -rf "@CMAKE_BINARY_DIR@"
+
+echo "清理完成!"
+
