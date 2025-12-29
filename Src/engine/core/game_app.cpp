@@ -13,7 +13,7 @@
 #include "game_app.h"
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
-#include "../utils/logger_util.h"
+#include "logger_util.h"
 
 
 namespace engine::core {
