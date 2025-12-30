@@ -10,12 +10,16 @@
 
 #pragma once
 
+#include<unique_ptr>
+
 //前向声明，减少头文件依赖，提高编译速度
 struct SDL_Window;
 struct SDL_Renderer;
 
 
 namespace engine::core {  //命名空间：保持路径结构清晰，避免命名冲突
+
+class XTime;
 
 /**
  * @brief 游戏应用类
@@ -49,5 +53,7 @@ private:
     SDL_Renderer* m_pRenderer = nullptr;
     bool m_IsRunning = false;
 
+    //引擎组件
+    std::unique_ptr<XTime> m_upTimeComponent;
 };
 }

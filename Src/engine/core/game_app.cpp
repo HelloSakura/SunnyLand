@@ -14,11 +14,15 @@
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 #include "logger_util.h"
+#include "XTime.h"
 
 
 namespace engine::core {
 
-GameApp::GameApp() = default;
+GameApp::GameApp()
+{
+    m_upTimeComponent = std::make_unique<XTime>();
+}
 
 GameApp::~GameApp()
 {
