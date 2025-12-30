@@ -13,6 +13,7 @@
 #include "game_app.h"
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
+#include <memory>
 #include "logger_util.h"
 #include "XTime.h"
 
@@ -41,11 +42,17 @@ void GameApp::run()
     }
 
     //主循环
+    m_upTimeComponent->setTargetFps(10);
     while(m_IsRunning){
-        float deltaTime = 0.01f;
+        m_upTimeComponent->update();
+        double deltaTime = m_upTimeComponent->getDeltaTime();
+
         handleEvents();
         update(deltaTime);;
         render();
+
+        spdlog::trace("frame_index:{} delta_time:{}", m_frameIndex, deltaTime);
+        m_frameIndex++;
     }
 
     close();
@@ -63,7 +70,7 @@ bool GameApp::init()
         spdlog::error("SDL 初始化失败: {}", SDL_GetError());
         return false;
     }
-
+    
     //创建窗口
     m_pWindow = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
     if(nullptr == m_pWindow){
@@ -85,7 +92,7 @@ bool GameApp::init()
     return true;
 }
 
-void GameApp::update(float deltaTime)
+void GameApp::update(double deltaTime)
 {
 
 }

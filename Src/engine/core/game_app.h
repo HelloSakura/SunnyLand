@@ -10,7 +10,9 @@
 
 #pragma once
 
-#include<unique_ptr>
+#include<memory>
+
+
 
 //前向声明，减少头文件依赖，提高编译速度
 struct SDL_Window;
@@ -44,7 +46,7 @@ private:
     [[nodiscard]] bool init();   //初始化游戏应用， nodiscard：避免返回值被忽略
     void close();
     void handleEvents();
-    void update(float deltaTime);
+    void update(double deltaTime);
     void render();
 
 
@@ -52,6 +54,7 @@ private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
     bool m_IsRunning = false;
+    int m_frameIndex = 0;
 
     //引擎组件
     std::unique_ptr<XTime> m_upTimeComponent;
