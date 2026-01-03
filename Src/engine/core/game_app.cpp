@@ -14,8 +14,9 @@
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 #include <memory>
-#include "logger_util.h"
+#include "LoggerUtil.h"
 #include "XTime.h"
+#include "RandomUtils.h"
 
 
 namespace engine::core {
@@ -40,7 +41,8 @@ void GameApp::run()
         spdlog::error("GameApp 初始化失败");
         return;
     }
-
+    //初始化时间
+    SDL_srand(SDL_GetTicks());
     //主循环
     m_upTimeComponent->setTargetFps(10);
     while(m_IsRunning){
@@ -50,7 +52,7 @@ void GameApp::run()
         handleEvents();
         update(deltaTime);;
         render();
-
+        SDL_DelayNS();
         spdlog::trace("frame_index:{} delta_time:{}", m_frameIndex, deltaTime);
         m_frameIndex++;
     }

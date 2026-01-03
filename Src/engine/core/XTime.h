@@ -28,14 +28,14 @@ private:
     void limitFrameRate(double cur_delta_time);
 
 private:
-    Uint64 m_u64LastTime;           //上一帧时间戳
-    Uint64 m_u64FrameStartTime;     //帧开始时间戳
-    double m_deltaTime;             //帧间隔
+    Uint64 m_u64LastTime;           //上一帧时间戳 ns
+    Uint64 m_u64FrameStartTime;     //帧开始时间戳 ns
+    double m_deltaTime;             //帧间隔 ms
     double m_timeScaleFactor;       //缩放因子
 
     //帧率限制相关
     int m_targetFps;                //目标帧率
-    double m_targetFrameTime;       //目标帧时间    
+    double m_targetFrameTime;       //目标帧时间 ms    
 };
 
 }
