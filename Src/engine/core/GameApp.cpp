@@ -10,20 +10,21 @@
 
 
 
-#include "game_app.h"
+#include "GameApp.h"
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 #include <memory>
 #include "LoggerUtil.h"
 #include "XTime.h"
 #include "RandomUtils.h"
+#include "ResourceManager.h"
 
 
 namespace engine::core {
 
 GameApp::GameApp()
 {
-    m_upTimeComponent = std::make_unique<XTime>();
+
 }
 
 GameApp::~GameApp()
@@ -44,7 +45,6 @@ void GameApp::run()
     //初始化时间
     SDL_srand(SDL_GetTicks());
     //主循环
-    m_upTimeComponent->setTargetFps(10);
     while(m_IsRunning){
         m_upTimeComponent->update();
         double deltaTime = m_upTimeComponent->getDeltaTime();
@@ -52,7 +52,7 @@ void GameApp::run()
         handleEvents();
         update(deltaTime);;
         render();
-        SDL_DelayNS();
+        SDL_DelayNS(static_cast<Uint64>(engine::utils::RandomUtils::getInstance().randomDoubleInRange(0, 300) * 1000000.0));
         spdlog::trace("frame_index:{} delta_time:{}", m_frameIndex, deltaTime);
         m_frameIndex++;
     }
@@ -63,7 +63,10 @@ void GameApp::run()
 bool GameApp::init()
 {
     // 初始化日志系统（必须在其他日志输出之前调用）
-    engine::utils::initLogger();
+    initLogger();
+    initSDL();
+    initTime();
+    initResourceManager();
     
     spdlog::trace("GameApp 初始化开始");
 
@@ -136,5 +139,39 @@ void GameApp::close()
     spdlog::trace("GameApp 关闭完成");
 }
 
+void GameApp::initSDL()
+{
+    if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)){
+        spdlog::error("SDL 初始化失败: {}", SDL_GetError());
+        throw std::runtime_error("SDL 初始化失败");
+    }
+    spdlog::trace("SDL 初始化成功");
+}
 
+void GameApp::initLogger()
+{
+    engine::utils::initLogger();
+    spdlog::trace("Logger 初始化成功");
+}
+
+void GameApp::initTime()
+{
+    m_upTimeComponent = std::make_unique<XTime>();
+    if(nullptr == m_upTimeComponent){
+        spdlog::error("XTime 初始化失败");
+        throw std::runtime_error("XTime 初始化失败");
+    }
+    m_upTimeComponent->setTargetFps(10);
+    m_upTimeComponent->setTimeScaleFactor(1.0);
+}
+
+void GameApp::initResourceManager()
+{
+    m_upResourceManager = std::make_unique<engine::resource::ResourceManager>(m_pRenderer);
+    if(nullptr == m_upResourceManager){
+        spdlog::error("ResourceManager 初始化失败");
+        throw std::runtime_error("ResourceManager 初始化失败");
+    }
+    spdlog::trace("ResourceManager 初始化成功");
+}
 }

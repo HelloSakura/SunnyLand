@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2025
  */
 
-#include "logger_util.h"
+#include "LoggerUtil.h"
 #include <spdlog/spdlog.h>
 
 #ifdef _WIN32

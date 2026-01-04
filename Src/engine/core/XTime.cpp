@@ -46,12 +46,21 @@ void XTime::limitFrameRate(double curDeltaTime)
         m_deltaTime = static_cast<double>(SDL_GetTicksNS() - m_u64LastTime) / 1000000.0;
         spdlog::trace("XTime 限制帧率, m_deltaTime: {} ms", m_deltaTime);
     }
+    else{
+        m_deltaTime = curDeltaTime;
+    }
 }
 
 
 double XTime::getDeltaTime() const
 {
     return m_deltaTime * m_timeScaleFactor;
+}
+
+void XTime::setTimeScaleFactor(double factor)
+{
+    m_timeScaleFactor = factor;
+    spdlog::trace("XTime 设置缩放因子: {}", m_timeScaleFactor);
 }
 
 double XTime::getUnscaledDeltaTime() const

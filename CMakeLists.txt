@@ -25,6 +25,10 @@ endif()
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+find_package(SDL3_ttf REQUIRED)
+find_package(SDL3_mixer REQUIRED)
+find_package(glm REQUIRED)
 
 # 收集所有源文件
 file(GLOB_RECURSE SOURCES 
@@ -34,12 +38,22 @@ file(GLOB_RECURSE SOURCES
 
 add_executable(${PROJECT_NAME} 
     src/main.cpp
-    src/engine/core/game_app.cpp
-    src/engine/core/game_app.h
+    src/engine/core/GameApp.cpp
+    src/engine/core/GameApp.h
     src/engine/core/XTime.cpp
     src/engine/core/XTime.h
-    src/engine/utils/logger_util.cpp
-    src/engine/utils/logger_util.h
+    src/engine/utils/LoggerUtil.cpp 
+    src/engine/utils/LoggerUtil.h
+    src/engine/utils/RandomUtils.cpp
+    src/engine/utils/RandomUtils.h
+    src/engine/resource/ResourceManager.cpp
+    src/engine/resource/ResourceManager.h
+    src/engine/resource/TextureManager.cpp
+    src/engine/resource/TextureManager.h
+    src/engine/resource/FontManager.cpp
+    src/engine/resource/FontManager.h
+    src/engine/resource/AudioManager.cpp
+    src/engine/resource/AudioManager.h
 )
 
 # 设置目标 C++ 标准
@@ -52,15 +66,52 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # 设置 include 目录
 # 1. 添加 src 目录，支持 "engine/xxx/xxx.h" 这样的路径
 # 2. 添加各个子目录，支持直接使用文件名（如 "game_app.h"）
+# 3. 显式添加 glm 的 include 目录（确保 compile_commands.json 中包含）
+#    原因：glm::glm 通过 INTERFACE_LINK_LIBRARIES 间接依赖 glm::glm-header-only，
+#    但 CMake 在生成 compile_commands.json 时可能无法正确解析这种间接依赖
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/resource
 )
 
-target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
-target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
-target_link_libraries(${PROJECT_NAME} SDL3::SDL3)
+# 确保 resource 目录被包含在所有编译命令中（包括 compile_commands.json）
+# 这对于 IDE 和 clangd 等工具很重要
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE 
+        /I"${CMAKE_CURRENT_SOURCE_DIR}/src/engine/resource"
+    )
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE 
+        -I"${CMAKE_CURRENT_SOURCE_DIR}/src/engine/resource"
+    )
+endif()
+
+target_link_libraries(${PROJECT_NAME} 
+                    spdlog::spdlog
+                    nlohmann_json::nlohmann_json
+                    SDL3::SDL3
+                    SDL3_image::SDL3_image
+                    SDL3_ttf::SDL3_ttf
+                    SDL3_mixer::SDL3_mixer
+                    glm::glm
+                    glm::glm-header-only
+)
+
+
+# 显式添加 glm 的 include 目录（确保 compile_commands.json 中包含）
+# 原因：glm::glm 通过 INTERFACE_LINK_LIBRARIES 间接依赖 glm::glm-header-only，
+# 但 CMake 在生成 compile_commands.json 时可能无法正确解析这种间接依赖
+# 使用 PUBLIC 作用域确保所有依赖此目标的目标也能看到这个路径
+if(WIN32)
+    target_include_directories(${PROJECT_NAME} PUBLIC "C:/Library/glm/include")
+elseif(APPLE)
+    target_include_directories(${PROJECT_NAME} PUBLIC "/opt/homebrew/include/glm")
+elseif(UNIX)
+    target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/glm")
+endif()
+
 
 # 文件末尾添加
 if(NOT TARGET clean-all)
@@ -95,4 +146,4 @@ add_custom_target(generate-clean-script
     COMMAND ${CMAKE_COMMAND} -E echo "清理脚本已生成到 ${CLEANUP_SCRIPT}"
     DEPENDS ${CLEANUP_SCRIPT}
     COMMENT "生成清理脚本"
-)
+) 

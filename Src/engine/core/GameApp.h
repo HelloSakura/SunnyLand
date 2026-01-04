@@ -18,6 +18,9 @@
 struct SDL_Window;
 struct SDL_Renderer;
 
+namespace engine::resource{
+    class ResourceManager;
+}
 
 namespace engine::core {  //命名空间：保持路径结构清晰，避免命名冲突
 
@@ -49,6 +52,12 @@ private:
     void update(double deltaTime);
     void render();
 
+    //引擎组件初始化
+    void initSDL();
+    void initLogger();
+    void initTime();
+    void initResourceManager();
+
 
 private:
     SDL_Window* m_pWindow = nullptr;
@@ -58,5 +67,6 @@ private:
 
     //引擎组件
     std::unique_ptr<XTime> m_upTimeComponent;
+    std::unique_ptr<resource::ResourceManager> m_upResourceManager;
 };
 }
