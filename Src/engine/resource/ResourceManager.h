@@ -62,18 +62,18 @@ public:
 #pragma region Sound Effect
     // *** 音效 ***
     Mix_Chunk* loadChunk(const std::string& path);     ///< @brief 载入音效
-    ///< @brief 尝试获取已加载的音频，未加载则尝试加载
-    ///< @brief 卸载音效
-    ///< @brief 清空所有的音效
+    Mix_Chunk* tryGetChunk(const std::string& path);///< @brief 尝试获取已加载的音频，未加载则尝试加载
+    void unloadChunk(Mix_Chunk* pChunk);///< @brief 卸载音效
+    void clearAllChunks();    ///< @brief 清空所有的音效
 #pragma endregion Sound Effect
 
 #pragma region music
     // *** 音乐 ***
     Mix_Music* loadMusic(const std::string& path);     ///< @brief 载入音乐
-    ///< @brief 尝试获取已加载的音乐，未加载则尝试加载
-    ///< @brief 卸载音乐
-    ///< @brief 清空所有的音乐
-#pragma endregion audio
+    Mix_Music* tryGetMusic(const std::string& path);///< @brief 尝试获取已加载的音乐，未加载则尝试加载
+    void unloadMusic(Mix_Music* pMusic);    ///< @brief 卸载音乐
+    void clearAllMusics();                  ///< @brief 清空所有的音乐
+#pragma endregion music
 
 private:
     std::unique_ptr<TextureManager> m_upTextureManager;

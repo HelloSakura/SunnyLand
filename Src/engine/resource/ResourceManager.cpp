@@ -22,4 +22,92 @@ ResourceManager::~ResourceManager()
     
 }
 
+TextureManager* ResourceManager::loadTexture(const std::string& path)
+{
+    return m_upTextureManager->loadTexture(path);
+}
+
+TextureManager* ResourceManager::tryGetTexture(const std::string& path)
+{
+    return m_upTextureManager->tryGetTexture(path);
+}
+
+void ResourceManager::unloadTexture(TextureManager* pTexture)
+{
+    m_upTextureManager->unloadTexture(pTexture);
+}
+
+void ResourceManager::clearAllTextures()
+{
+    m_upTextureManager->clearAll();
+}
+
+FontManager* ResourceManager::loadFont(const std::string& path, int size)
+{
+    return m_upFontManager->loadFont(path, size);
+}
+
+FontManager* ResourceManager::tryGetFont(const std::string& path, int size)
+{
+    return m_upFontManager->tryGetFont(path, size);
+}
+
+void ResourceManager::unloadFont(FontManager* pFont)
+{
+    m_upFontManager->unloadFont(pFont);
+}
+
+void ResourceManager::clearAllFonts()
+{
+    m_upFontManager->clearAll();
+}
+
+AudioManager* ResourceManager::loadChunk(const std::string& path)
+{
+    return m_upAudioManager->loadChunk(path);
+}
+
+AudioManager* ResourceManager::tryGetChunk(const std::string& path)
+{
+    return m_upAudioManager->tryGetChunk(path);
+}
+
+void ResourceManager::unloadChunk(AudioManager* pChunk)
+{
+    m_upAudioManager->unloadChunk(pChunk);
+}
+
+void ResourceManager::clearAllChunks()
+{
+    m_upAudioManager->clearAllChunks();
+}
+
+AudioManager* ResourceManager::loadMusic(const std::string& path)
+{
+    return m_upAudioManager->loadMusic(path);
+}
+
+AudioManager* ResourceManager::tryGetMusic(const std::string& path)
+{
+    return m_upAudioManager->tryGetMusic(path);
+}
+
+void ResourceManager::unloadMusic(AudioManager* pMusic)
+{
+    m_upAudioManager->unloadMusic(pMusic);
+}
+
+void ResourceManager::clearAllMusics()
+{
+    m_upAudioManager->clearAllMusics();
+}
+
+
+void ResourceManager::clearAll()
+{
+    m_upTextureManager->clearAll();
+    m_upFontManager->clearAll();
+    m_upAudioManager->clearAll();
+
+}
 }

@@ -17,7 +17,8 @@ TextureManager::TextureManager(SDL_Renderer* pRenderer)
 
 TextureManager::~TextureManager()
 {
-
+    clearAllTextures();
+    m_pRenderer = nullptr;
 }
 
 SDL_Texture* TextureManager::loadTexture(const std::string& path)
@@ -37,11 +38,26 @@ SDL_Texture* TextureManager::loadTexture(const std::string& path)
 
 SDL_Texture* TextureManager::tryGetTexture(const std::string& path)
 {
-    return nullptr;
+    auto it = m_textureMap.find(path);
+    if(it != m_textureMap.end()){
+        return it->second.get();
+    }
+    
+    auto pTexture = loadTexture(path);
+    return pTexture;
 }
 
 void TextureManager::unloadTexture(SDL_Texture* pTexture)
 {
+    for(auto it = m_textureMap.begin(); it != m_textureMap.end();){
+        if(it->second.get() == pTexture){
+            it = m_textureMap.erase(it);
+            break;
+        }
+        else{
+            ++it;
+        }
+    }
 }
 
 void TextureManager::clearAllTextures()
@@ -51,7 +67,9 @@ void TextureManager::clearAllTextures()
 
 glm::vec2 TextureManager::getTextureSize(SDL_Texture* pTexture)
 {
-    return glm::vec2(0, 0);
+    int w, h;
+    SDL_QueryTexture(pTexture, NULL, NULL, &w, &h);
+    return glm::vec2(w, h);
 }
 
 }
