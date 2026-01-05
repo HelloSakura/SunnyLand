@@ -15,15 +15,15 @@
 struct SDL_Renderer;
 struct SDL_Texture;
 struct TTF_Font;
-
+struct Mix_Chunk;
+struct Mix_Music;
 
 namespace engine::resource{
 
 class TextureManager;
 class FontManager;
 class AudioManager;
-class Mix_Chunk;
-class Mix_Music;
+
 
 
 class ResourceManager{
@@ -44,7 +44,7 @@ public:
     // *** 图片 ***
     SDL_Texture* loadTexture(const std::string& path);     ///< @brief 载入图片纹理
     SDL_Texture* tryGetTexture(const std::string& path);///< @brief 尝试获取已加载的图片纹理，未加载则尝试加载
-    void unloadTexture(SDL_Texture* pTexture);///< @brief 卸载图片纹理
+    void unloadTexture(const std::string& path);///< @brief 卸载图片纹理
     glm::vec2 getTextureSize(const std::string& path);///< @brief 获取图片大小尺寸
     void clearAllTextures();    ///< @brief 清空所有的图片纹理
 #pragma endregion texture
@@ -54,7 +54,7 @@ public:
     // *** 字体 ***
     TTF_Font* loadFont(const std::string& path, int size);     ///< @brief 载入字体
     TTF_Font* tryGetFont(const std::string& path, int size);    ///< @brief 尝试获取已加载的字体，未加载则尝试加载
-    void unloadFont(TTF_Font* pFont);    ///< @brief 卸载字体
+    void unloadFont(const std::string& path, int size);    ///< @brief 卸载字体
     void clearAllFonts();    ///< @brief 清空所有的字体
 
 #pragma endregion font
@@ -63,7 +63,7 @@ public:
     // *** 音效 ***
     Mix_Chunk* loadChunk(const std::string& path);     ///< @brief 载入音效
     Mix_Chunk* tryGetChunk(const std::string& path);///< @brief 尝试获取已加载的音频，未加载则尝试加载
-    void unloadChunk(Mix_Chunk* pChunk);///< @brief 卸载音效
+    void unloadChunk(const std::string& path);///< @brief 卸载音效
     void clearAllChunks();    ///< @brief 清空所有的音效
 #pragma endregion Sound Effect
 
@@ -71,7 +71,7 @@ public:
     // *** 音乐 ***
     Mix_Music* loadMusic(const std::string& path);     ///< @brief 载入音乐
     Mix_Music* tryGetMusic(const std::string& path);///< @brief 尝试获取已加载的音乐，未加载则尝试加载
-    void unloadMusic(Mix_Music* pMusic);    ///< @brief 卸载音乐
+    void unloadMusic(const std::string& path);    ///< @brief 卸载音乐
     void clearAllMusics();                  ///< @brief 清空所有的音乐
 #pragma endregion music
 

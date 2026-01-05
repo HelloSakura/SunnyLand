@@ -1,6 +1,6 @@
 #include<memory>
-#include <string>
-#include <unordered_map>
+#include<string>
+#include<unordered_map>
 #include<SDL3/SDL_render.h>
 #include<glm/glm.hpp>
 
@@ -38,9 +38,9 @@ public:
 private:
     SDL_Texture* loadTexture(const std::string& path);
     SDL_Texture* tryGetTexture(const std::string& path);
-    void unloadTexture(SDL_Texture* pTexture);
+    void unloadTexture(const std::string& path);
+    glm::vec2 getTextureSize(const std::string& path);
     void clearAllTextures();
-    glm::vec2 getTextureSize(SDL_Texture* pTexture);
 
 
 private:

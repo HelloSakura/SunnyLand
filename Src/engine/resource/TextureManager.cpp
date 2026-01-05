@@ -13,6 +13,7 @@ TextureManager::TextureManager(SDL_Renderer* pRenderer)
         throw std::runtime_error("渲染器指针为空");
     }
     m_pRenderer = pRenderer;
+    spdlog::trace("TextureManager 初始化成功");
 }
 
 TextureManager::~TextureManager()
@@ -47,17 +48,32 @@ SDL_Texture* TextureManager::tryGetTexture(const std::string& path)
     return pTexture;
 }
 
-void TextureManager::unloadTexture(SDL_Texture* pTexture)
+void TextureManager::unloadTexture(const std::string& path)
 {
-    for(auto it = m_textureMap.begin(); it != m_textureMap.end();){
-        if(it->second.get() == pTexture){
-            it = m_textureMap.erase(it);
-            break;
-        }
-        else{
-            ++it;
-        }
+    auto it = m_textureMap.find(path);
+    if(it != m_textureMap.end()){
+        m_textureMap.erase(it);
+        spdlog::debug("卸载图片成功: {}", path);
     }
+    else{
+        spdlog::error("卸载图片失败: {}", path + " 不存在");
+    }
+}
+
+glm::vec2 TextureManager::getTextureSize(const std::string& path)
+{
+    auto pTexture = tryGetTexture(path);
+    if(!pTexture){
+        spdlog::error("获取图片大小失败: {}", path + " 不存在");
+        return glm::vec2(0, 0);
+    }
+
+    glm::vec2 size;
+    if(!SDL_GetTextureSize(pTexture, &size.x, &size.y)){
+        spdlog::error("获取图片大小失败: {}", path);
+        return glm::vec2(0, 0);
+    }
+    return size;
 }
 
 void TextureManager::clearAllTextures()
@@ -65,11 +81,6 @@ void TextureManager::clearAllTextures()
     m_textureMap.clear();
 }
 
-glm::vec2 TextureManager::getTextureSize(SDL_Texture* pTexture)
-{
-    int w, h;
-    SDL_QueryTexture(pTexture, NULL, NULL, &w, &h);
-    return glm::vec2(w, h);
-}
+
 
 }
