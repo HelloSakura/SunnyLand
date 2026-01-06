@@ -17,7 +17,7 @@
 
 namespace engine::utils {
 
-void initLogger()
+void initLogger(spdlog::level::level_enum level)
 {
 #ifdef _WIN32
     // 设置 Windows 控制台代码页为 UTF-8，解决中文乱码问题
@@ -26,7 +26,7 @@ void initLogger()
 #endif
     
     // 初始化 spdlog：设置日志级别为 trace，这样所有级别的日志都会输出
-    spdlog::set_level(spdlog::level::trace);
+    spdlog::set_level(level);
     // 设置日志格式：时间戳 + 级别 + 消息
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
 }

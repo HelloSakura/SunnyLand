@@ -53,12 +53,14 @@ private:
     void render();
 
     //引擎组件初始化
-    void initSDL();
-    void initLogger();
-    void initTime();
-    void initResourceManager();
+    bool initSDL();
+    bool initTime();
+    bool initResourceManager();
 
 
+    //测试函数
+
+    void testResourceManager();
 private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;

@@ -42,8 +42,9 @@ void GameApp::run()
         spdlog::error("GameApp 初始化失败");
         return;
     }
-    //初始化时间
-    SDL_srand(SDL_GetTicks());
+
+    testResourceManager();
+
     //主循环
     while(m_IsRunning){
         m_upTimeComponent->update();
@@ -63,36 +64,13 @@ void GameApp::run()
 bool GameApp::init()
 {
     // 初始化日志系统（必须在其他日志输出之前调用）
-    initLogger();
-    initSDL();
-    initTime();
-    initResourceManager();
-    
     spdlog::trace("GameApp 初始化开始");
-
-    //初始化SDL
-    if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)){
-        spdlog::error("SDL 初始化失败: {}", SDL_GetError());
-        return false;
-    }
+    if(!initSDL()) return false;
+    if(!initTime()) return false;
+    if(!initResourceManager()) return false;
     
-    //创建窗口
-    m_pWindow = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
-    if(nullptr == m_pWindow){
-        spdlog::error("窗口创建失败: {}", SDL_GetError());
-        return false;
-    }
-    spdlog::trace("窗口创建成功");
+    spdlog::trace("GameApp 初始化成功");
 
-    //创建渲染器
-    m_pRenderer = SDL_CreateRenderer(m_pWindow, nullptr);
-    if(nullptr == m_pRenderer){
-        spdlog::error("渲染器创建失败: {}", SDL_GetError());
-        return false;
-    }
-    spdlog::trace("渲染器创建成功");
-    spdlog::trace("SDL 初始化成功");
-    
     m_IsRunning = true;
     return true;
 }
@@ -139,39 +117,66 @@ void GameApp::close()
     spdlog::trace("GameApp 关闭完成");
 }
 
-void GameApp::initSDL()
+bool GameApp::initSDL() 
 {
+    //初始化SDL
     if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)){
         spdlog::error("SDL 初始化失败: {}", SDL_GetError());
-        throw std::runtime_error("SDL 初始化失败");
+        return false;
     }
+    
+    //创建窗口
+    m_pWindow = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
+    if(nullptr == m_pWindow){
+        spdlog::error("窗口创建失败: {}", SDL_GetError());
+        return false;
+    }
+    spdlog::trace("窗口创建成功");
+
+    //创建渲染器
+    m_pRenderer = SDL_CreateRenderer(m_pWindow, nullptr);
+    if(nullptr == m_pRenderer){
+        spdlog::error("渲染器创建失败: {}", SDL_GetError());
+        return false;
+    }
+    spdlog::trace("渲染器创建成功");
     spdlog::trace("SDL 初始化成功");
+    return true;
 }
 
-void GameApp::initLogger()
+bool GameApp::initTime()
 {
-    engine::utils::initLogger();
-    spdlog::trace("Logger 初始化成功");
-}
-
-void GameApp::initTime()
-{
-    m_upTimeComponent = std::make_unique<XTime>();
-    if(nullptr == m_upTimeComponent){
-        spdlog::error("XTime 初始化失败");
-        throw std::runtime_error("XTime 初始化失败");
+    try{
+        m_upTimeComponent = std::make_unique<XTime>();
+    }catch(const std::exception& e){
+        spdlog::error("XTime 初始化失败: {}", e.what());
+        return false;
     }
-    m_upTimeComponent->setTargetFps(10);
-    m_upTimeComponent->setTimeScaleFactor(1.0);
+    spdlog::trace("XTime 初始化成功");
+    return true;
 }
 
-void GameApp::initResourceManager()
+bool GameApp::initResourceManager()
 {
-    m_upResourceManager = std::make_unique<engine::resource::ResourceManager>(m_pRenderer);
-    if(nullptr == m_upResourceManager){
-        spdlog::error("ResourceManager 初始化失败");
-        throw std::runtime_error("ResourceManager 初始化失败");
+    try{
+        m_upResourceManager = std::make_unique<engine::resource::ResourceManager>(m_pRenderer);
+    }catch(const std::exception& e){
+        spdlog::error("ResourceManager 初始化失败: {}", e.what());
+        return false;
     }
     spdlog::trace("ResourceManager 初始化成功");
+    return true;
 }
+
+
+void GameApp::testResourceManager()
+{
+    m_upResourceManager->loadTexture("../../assets/textures/Actors/frog.png");
+    m_upResourceManager->loadMusic("../../assets/audio/monster.mp3");
+    m_upResourceManager->loadFont("../../assets/fonts/VonwaonBitmap-16px.ttf", 16);
+
+    m_upResourceManager->unloadTexture("../../assets/textures/Actors/frog.png");
+    m_upResourceManager->unloadMusic("../../assets/audio/monster.mp3");
+    m_upResourceManager->unloadFont("../../assets/fonts/VonwaonBitmap-16px.ttf", 16);
+};
 }

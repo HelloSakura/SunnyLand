@@ -10,16 +10,6 @@ class TextureManager{
 
     friend class ResourceManager;       //声明ResourceManager为友元类，可以访问TextureManager的私有成员
 
-private:
-    struct SDLTextureDeleter{   //自定义删除器，配合智能指针实现RAII机制
-        void operator()(SDL_Texture* pTexture) const{
-            if(pTexture){
-                SDL_DestroyTexture(pTexture);
-            }
-        }
-    };
-
-
 public:
     /**
     * @brief 构造函数
@@ -44,6 +34,14 @@ private:
 
 
 private:
+    struct SDLTextureDeleter{   //自定义删除器，配合智能指针实现RAII机制
+        void operator()(SDL_Texture* pTexture) const{
+            if(pTexture){
+                SDL_DestroyTexture(pTexture);
+            }
+        }
+    };
+
     std::unordered_map<std::string, std::unique_ptr<SDL_Texture, SDLTextureDeleter>> m_textureMap;
     SDL_Renderer* m_pRenderer = nullptr;    //指向渲染器指针
 };

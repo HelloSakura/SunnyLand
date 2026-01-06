@@ -20,6 +20,7 @@ TextureManager::~TextureManager()
 {
     clearAllTextures();
     m_pRenderer = nullptr;
+    spdlog::trace("TextureManager 退出成功");
 }
 
 SDL_Texture* TextureManager::loadTexture(const std::string& path)
@@ -31,21 +32,22 @@ SDL_Texture* TextureManager::loadTexture(const std::string& path)
     SDL_Texture* pTexture = IMG_LoadTexture(m_pRenderer, path.c_str());
     if(!pTexture){
         spdlog::error("加载图片失败: {}", path);
+        throw std::runtime_error("加载图片失败: " + path + " 错误信息: " + std::string(SDL_GetError()));
+        return nullptr;
     }
     m_textureMap.emplace(path, std::unique_ptr<SDL_Texture, SDLTextureDeleter>(pTexture));
     spdlog::debug("加载图片成功: {}", path);
-    return pTexture;
+    return pTexture;   
 }
 
 SDL_Texture* TextureManager::tryGetTexture(const std::string& path)
 {
     auto it = m_textureMap.find(path);
     if(it != m_textureMap.end()){
+        spdlog::debug("获取图片成功: {}", path);
         return it->second.get();
     }
-    
-    auto pTexture = loadTexture(path);
-    return pTexture;
+    return loadTexture(path);
 }
 
 void TextureManager::unloadTexture(const std::string& path)

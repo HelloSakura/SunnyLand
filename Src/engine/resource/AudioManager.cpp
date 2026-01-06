@@ -21,7 +21,7 @@ AudioManager::AudioManager()
     }
 
     
-    spdlog::trace("音频系统初始化成功");
+    spdlog::trace("AudioManager 初始化成功");
 }
 
 AudioManager::~AudioManager()
@@ -39,8 +39,9 @@ AudioManager::~AudioManager()
 
     //退出音频系统
     Mix_Quit();
-    spdlog::trace("音频系统退出成功");
+    spdlog::trace("AudioManager 退出成功");
 }
+
 
 Mix_Chunk* AudioManager::loadChunk(const std::string& path)
 {
@@ -52,17 +53,19 @@ Mix_Chunk* AudioManager::loadChunk(const std::string& path)
     Mix_Chunk* pChunk = Mix_LoadWAV(path.c_str());
     if(!pChunk){
         spdlog::error("加载音效失败: {}", path);
+        throw std::runtime_error("加载音效失败: " + path + " 错误信息: " + std::string(SDL_GetError()));
         return nullptr;
     }
     m_chunkMap.emplace(path, std::unique_ptr<Mix_Chunk, MixChunkDeleter>(pChunk));
     spdlog::debug("加载音效成功: {}", path);
-    return pChunk;
+    return pChunk;   
 }
 
 Mix_Chunk* AudioManager::tryGetChunk(const std::string& path)
 {
     auto it = m_chunkMap.find(path);
     if(it != m_chunkMap.end()){
+        spdlog::debug("获取音效成功: {}", path);
         return it->second.get();
     }
     return loadChunk(path);
@@ -95,21 +98,24 @@ Mix_Music* AudioManager::loadMusic(const std::string& path)
     Mix_Music* pMusic = Mix_LoadMUS(path.c_str());
     if(!pMusic){
         spdlog::error("加载音乐失败: {}", path);
+        throw std::runtime_error("加载音乐失败: " + path + " 错误信息: " + std::string(SDL_GetError()));
         return nullptr;
     }
     m_musicMap.emplace(path, std::unique_ptr<Mix_Music, MixMusicDeleter>(pMusic));
     spdlog::debug("加载音乐成功: {}", path);
-    return pMusic;
+    return pMusic;   
 }
 
 Mix_Music* AudioManager::tryGetMusic(const std::string& path)
 {
     auto it = m_musicMap.find(path);
     if(it != m_musicMap.end()){
+        spdlog::debug("获取音乐成功: {}", path);
         return it->second.get();
     }
     return loadMusic(path);
 }
+
 
 void AudioManager::unloadMusic(const std::string& path)
 {

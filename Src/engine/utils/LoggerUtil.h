@@ -10,13 +10,15 @@
 
 #pragma once
 
+#include "spdlog/spdlog.h"
+
 namespace engine::utils {
 
 /**
  * @brief 初始化日志系统
  * @details 设置 spdlog 日志级别和格式，并配置 Windows 控制台 UTF-8 编码
  */
-void initLogger();
+void initLogger(spdlog::level::level_enum level);
 
 }
 
