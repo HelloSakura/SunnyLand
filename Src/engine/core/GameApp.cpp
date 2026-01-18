@@ -11,13 +11,19 @@
 
 
 #include "GameApp.h"
+
+
+#include "SDL3/SDL_render.h"
+#include "engine/core/XTime.h"
+#include "engine/utils/RandomUtils.h"
+#include "engine/utils/PathUtils.h"
+#include "engine/resource/ResourceManager.h"
+#include "engine/render/Renderer.h"
+#include "engine/render/Camera.h"
+
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 #include <memory>
-#include "LoggerUtil.h"
-#include "XTime.h"
-#include "RandomUtils.h"
-#include "ResourceManager.h"
 
 
 namespace engine::core {
@@ -68,7 +74,8 @@ bool GameApp::init()
     if(!initSDL()) return false;
     if(!initTime()) return false;
     if(!initResourceManager()) return false;
-    
+    if(!initRenderer()) return false;
+    if(!initCamera()) return false;
     spdlog::trace("GameApp 初始化成功");
 
     m_IsRunning = true;
@@ -77,13 +84,15 @@ bool GameApp::init()
 
 void GameApp::update(double deltaTime)
 {
-
+    testCamera();
 }
 
 
 void GameApp::render()
 {
-
+    m_upRenderer->clearScreen();
+    testRenderer();
+    m_upRenderer->present();
 }
 
 void GameApp::handleEvents()
@@ -140,6 +149,9 @@ bool GameApp::initSDL()
         return false;
     }
     spdlog::trace("渲染器创建成功");
+
+    //设置逻辑分辨率
+    SDL_SetRenderLogicalPresentation(m_pRenderer, 640, 360, SDL_LOGICAL_PRESENTATION_LETTERBOX);
     spdlog::trace("SDL 初始化成功");
     return true;
 }
@@ -168,15 +180,68 @@ bool GameApp::initResourceManager()
     return true;
 }
 
+bool GameApp::initRenderer()
+{
+    try{
+        m_upRenderer = std::make_unique<engine::render::Renderer>(m_pRenderer, m_upResourceManager.get());
+    }catch(const std::exception& e){
+        spdlog::error("Renderer 初始化失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("Renderer 初始化成功");
+    return true;
+}
+
+bool GameApp::initCamera()
+{
+    try{
+        m_upCamera = std::make_unique<engine::render::Camera>(glm::vec2(1280, 720), glm::vec2(0, 0));
+    }catch(const std::exception& e){
+        spdlog::error("Camera 初始化失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("Camera 初始化成功");
+    return true;
+}
+
+
 
 void GameApp::testResourceManager()
 {
-    m_upResourceManager->loadTexture("../../assets/textures/Actors/frog.png");
-    m_upResourceManager->loadMusic("../../assets/audio/monster.mp3");
-    m_upResourceManager->loadFont("../../assets/fonts/VonwaonBitmap-16px.ttf", 16);
+    spdlog::debug("测试ResourceManager");
+    // 使用 PathUtils 获取资源路径，确保跨平台兼容性
+    std::string texturePath = engine::utils::PathUtils::getResourcePath("assets/textures/Actors/frog.png");
+    std::string musicPath = engine::utils::PathUtils::getResourcePath("assets/audio/monster.mp3");
+    std::string fontPath = engine::utils::PathUtils::getResourcePath("assets/fonts/VonwaonBitmap-16px.ttf");
 
-    m_upResourceManager->unloadTexture("../../assets/textures/Actors/frog.png");
-    m_upResourceManager->unloadMusic("../../assets/audio/monster.mp3");
-    m_upResourceManager->unloadFont("../../assets/fonts/VonwaonBitmap-16px.ttf", 16);
+    m_upResourceManager->loadTexture(texturePath);
+    m_upResourceManager->loadMusic(musicPath);
+    m_upResourceManager->loadFont(fontPath, 16);
+
+    m_upResourceManager->unloadTexture(texturePath);
+    m_upResourceManager->unloadMusic(musicPath);
+    m_upResourceManager->unloadFont(fontPath, 16);
 };
+
+void GameApp::testRenderer()
+{
+    spdlog::debug("测试Renderer");
+    // 使用 PathUtils 获取资源路径，确保跨平台兼容性
+    engine::render::Sprite sprite_frog(engine::utils::PathUtils::getResourcePath("assets/textures/Actors/frog.png"));
+    engine::render::Sprite sprite_ui(engine::utils::PathUtils::getResourcePath("assets/textures/UI/buttons/Start1.png"));
+    engine::render::Sprite sprite_background(engine::utils::PathUtils::getResourcePath("assets/textures/Layers/back.png"));
+
+    static float rotation = 0.0f;
+    rotation += 1.0f;
+
+    m_upRenderer->drawParallax(*m_upCamera, sprite_background, glm::vec2(100.0f, 100.0f), glm::vec2(1.0f, 1.0f), {true, false});
+    m_upRenderer->drawSprite(*m_upCamera, sprite_frog, glm::vec2(100.0f, 100.0f), glm::vec2(1.0f, 1.0f), rotation);
+    m_upRenderer->drawUISprite(sprite_ui,  glm::vec2(100.0f, 100.0f));
+}
+
+void GameApp::testCamera()
+{
+    spdlog::debug("测试Camera");
+}
+
 }

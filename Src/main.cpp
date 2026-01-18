@@ -4,7 +4,7 @@
 
 int main()  
 {
-    engine::utils::initLogger(spdlog::level::trace);
+    engine::utils::initLogger(spdlog::level::debug);
     engine::core::GameApp gameApp;
     gameApp.run();
     return 0;

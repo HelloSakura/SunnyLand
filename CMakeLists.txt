@@ -38,14 +38,20 @@ file(GLOB_RECURSE SOURCES
 
 add_executable(${PROJECT_NAME} 
     src/main.cpp
+
     src/engine/core/GameApp.cpp
     src/engine/core/GameApp.h
     src/engine/core/XTime.cpp
     src/engine/core/XTime.h
+
     src/engine/utils/LoggerUtil.cpp 
     src/engine/utils/LoggerUtil.h
     src/engine/utils/RandomUtils.cpp
     src/engine/utils/RandomUtils.h
+    src/engine/utils/MathUtils.h
+    src/engine/utils/PathUtils.cpp
+    src/engine/utils/PathUtils.h
+
     src/engine/resource/ResourceManager.cpp
     src/engine/resource/ResourceManager.h
     src/engine/resource/TextureManager.cpp
@@ -54,6 +60,12 @@ add_executable(${PROJECT_NAME}
     src/engine/resource/FontManager.h
     src/engine/resource/AudioManager.cpp
     src/engine/resource/AudioManager.h
+    src/engine/render/Renderer.cpp
+    src/engine/render/Renderer.h
+    src/engine/render/Camera.cpp
+    src/engine/render/Camera.h
+    src/engine/render/Sprite.cpp
+    src/engine/render/Sprite.h
 )
 
 # 设置目标 C++ 标准
@@ -62,6 +74,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
 )
+
+# 设置 Visual Studio 启动项目（避免调试时选择 ALL_BUILD 导致"拒绝访问"错误）
+# 设置 Visual Studio 调试工作目录为项目根目录（确保相对路径资源文件能正确加载）
+if(MSVC)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+    set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 
 # 设置 include 目录
 # 1. 添加 src 目录，支持 "engine/xxx/xxx.h" 这样的路径
@@ -74,6 +93,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/resource
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/render
 )
 
 # 确保 resource 目录被包含在所有编译命令中（包括 compile_commands.json）
@@ -98,6 +118,12 @@ target_link_libraries(${PROJECT_NAME}
                     glm::glm
                     glm::glm-header-only
 )
+
+# 链接 filesystem 库（C++17 std::filesystem）
+# 注意：MSVC 和 GCC >= 9.0 不需要额外链接，GCC < 9.0 需要链接 stdc++fs
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0")
+    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++fs)
+endif()
 
 
 # 显式添加 glm 的 include 目录（确保 compile_commands.json 中包含）

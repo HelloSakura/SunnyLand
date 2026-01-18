@@ -1,6 +1,5 @@
 #include "AudioManager.h"
 #include "SDL3_mixer/SDL_mixer.h"
-#include <cstddef>
 #include<stdexcept>
 #include<spdlog/spdlog.h>
 

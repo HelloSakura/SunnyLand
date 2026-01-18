@@ -22,6 +22,11 @@ namespace engine::resource{
     class ResourceManager;
 }
 
+namespace engine::render{
+    class Renderer;
+    class Camera;
+}
+
 namespace engine::core {  //命名空间：保持路径结构清晰，避免命名冲突
 
 class XTime;
@@ -53,14 +58,19 @@ private:
     void render();
 
     //引擎组件初始化
-    bool initSDL();
-    bool initTime();
-    bool initResourceManager();
+    [[nodiscard]] bool initSDL();
+    [[nodiscard]] bool initTime();
+    [[nodiscard]] bool initResourceManager();
+    [[nodiscard]] bool initRenderer();
+    [[nodiscard]] bool initCamera();
 
 
     //测试函数
-
     void testResourceManager();
+    void testRenderer();
+    void testCamera();
+
+
 private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
@@ -69,6 +79,8 @@ private:
 
     //引擎组件
     std::unique_ptr<XTime> m_upTimeComponent;
-    std::unique_ptr<resource::ResourceManager> m_upResourceManager;
+    std::unique_ptr<engine::resource::ResourceManager> m_upResourceManager;
+    std::unique_ptr<engine::render::Renderer> m_upRenderer;
+    std::unique_ptr<engine::render::Camera> m_upCamera;
 };
 }

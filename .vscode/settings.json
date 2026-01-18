@@ -26,6 +26,7 @@
         "-I${workspaceFolder}/src/engine/core",
         "-I${workspaceFolder}/src/engine/utils",
         "-I${workspaceFolder}/src/engine/resource",
+        "-I${workspaceFolder}/src/engine/render",
         "-IC:/Library/spdlog/include",
         "-IC:/Library/nlohmann/include",
         "-IC:/Library/SDL3/include",
