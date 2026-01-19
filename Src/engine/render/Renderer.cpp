@@ -50,18 +50,18 @@ void Renderer::drawSprite(const Camera& camera, const Sprite& sprite, const glm:
     }
 
     //应用相机变换
-    glm::vec2 world_pos = camera.worldToScreen(position);
+    glm::vec2 screen_pos = camera.worldToScreen(position);
 
     //计算模板矩形
     SDL_FRect dst_rect = {
-        world_pos.x,
-        world_pos.y,
+        screen_pos.x,
+        screen_pos.y,
         src_rect.value().w * scale.x,
         src_rect.value().h * scale.y
     };
 
     //视口裁剪，不在视口内不绘制
-    if(!isRectInViewport(dst_rect)){
+    if(!isRectInViewport(camera, dst_rect)){
         return;
     }
 
@@ -69,10 +69,10 @@ void Renderer::drawSprite(const Camera& camera, const Sprite& sprite, const glm:
     if(!SDL_RenderTextureRotated(m_pRenderer, pTexture, &src_rect.value(), &dst_rect, angle, nullptr, sprite.isFlipX() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)){
         spdlog::error("绘制精灵失败: ID:{}, 错误: {}", sprite.getTextureID(), SDL_GetError());
     }
-    spdlog::debug("绘制精灵成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {}), 旋转: {}", sprite.getTextureID(), world_pos.x, world_pos.y, scale.x, scale.y, angle);
+    spdlog::debug("绘制精灵成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {}), 旋转: {}", sprite.getTextureID(), screen_pos.x, screen_pos.y, scale.x, scale.y, angle);
 }
 
-void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const glm::vec2& position, const glm::vec2& scaleFactor, const glm::bvec2& repeat, const glm::vec2& scale)
+void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const glm::vec2& position, const glm::vec2& scrollFactor, const glm::bvec2& repeat, const glm::vec2& scale)
 {
     SDL_Texture* pTexture = m_pResourceManager->tryGetTexture(sprite.getTextureID());
     if(pTexture == nullptr){
@@ -87,7 +87,7 @@ void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const gl
     spdlog::debug("获取矩形区域成功: ID:{}, 矩形区域: ({}, {}, {}, {})", sprite.getTextureID(), src_rect.value().x, src_rect.value().y, src_rect.value().w, src_rect.value().h);
     //应用相机变换，需要考虑视差滚动因子
     //得到的是什么？？
-    glm::vec2 pos_screen = camera.worldToScreenWithParallax(position, scaleFactor);
+    glm::vec2 pos_screen = camera.worldToScreenWithParallax(position, scrollFactor);
 
     //计算缩放后的纹理尺寸
     float tex_scale_w = src_rect.value().w * scale.x;
@@ -116,18 +116,18 @@ void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const gl
         stop_pos.y = glm::min(pos_screen.y + tex_scale_h, view_size.y);
     }
     
+    spdlog::info("view_size: ({}, {}), pos_screen: ({}, {}), tex_scale: ({}, {})", view_size.x, view_size.y, pos_screen.x, pos_screen.y, tex_scale_w, tex_scale_h);
+    spdlog::info("start_pos: ({}, {}), stop_pos: ({}, {})", start_pos.x, start_pos.y, stop_pos.x, stop_pos.y);
+    
     for(float y = start_pos.y; y < stop_pos.y; y += tex_scale_h){
         for(float x = start_pos.x; x < stop_pos.x; x += tex_scale_w){
             SDL_FRect dst_rect = {x, y, tex_scale_w, tex_scale_h};
-            if(!isRectInViewport(dst_rect)){
-                continue;
-            }
             if(!SDL_RenderTextureRotated(m_pRenderer, pTexture, &src_rect.value(), &dst_rect, 0.0, nullptr, sprite.isFlipX() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)){
                 spdlog::error("绘制视差滚动背景失败: ID:{}, 错误: {}", sprite.getTextureID(), SDL_GetError());
             }
         }
     }
-    spdlog::debug("绘制视差滚动背景成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {})", sprite.getTextureID(), start_pos.x, start_pos.y, scaleFactor.x, scaleFactor.y);
+    spdlog::debug("绘制视差滚动背景成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {})", sprite.getTextureID(), start_pos.x, start_pos.y, scrollFactor.x, scrollFactor.y);
 }
 
 //画UI，不需要进行精灵图转换，UI始终在屏幕中固定的位置上绘制
@@ -222,9 +222,15 @@ std::optional<SDL_FRect> Renderer::getSpriteRect(const Sprite& sprite)
   
 }
 
-bool Renderer::isRectInViewport(const SDL_FRect& rect)
+bool Renderer::isRectInViewport(const Camera& camera, const SDL_FRect& rect)
 {
-    return true;
+    glm::vec2 viewport_size = camera.getViewportSize();
+
+    //AABB碰撞检测，矩形与视口有重叠则返回true
+    if(rect.x >= 0 && rect.y >= 0 && rect.x + rect.w <= viewport_size.x && rect.y + rect.h <= viewport_size.y){
+        return true;
+    }
+    return false;
 }
 
 }

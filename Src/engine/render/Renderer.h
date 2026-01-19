@@ -41,11 +41,11 @@ public:
      * @param camera 相机
      * @param sprite 精灵
      * @param position 位置
-     * @param scaleFactor 缩放因子
+     * @param scrollFactor 视差滚动因子
      * @param repeat 是否重复
      * @param scale 缩放
     */
-    void drawParallax(const Camera& camera, const Sprite& sprite, const glm::vec2& position, const glm::vec2& scaleFactor, 
+    void drawParallax(const Camera& camera, const Sprite& sprite, const glm::vec2& position, const glm::vec2& scrollFactor, 
                       const glm::bvec2& repeat = {true, true}, const glm::vec2& scale = glm::vec2(1.0f, 1.0f));
 
     ///< @brief 在屏幕坐标中直接渲染一个用于UI的Sprite对象
@@ -67,7 +67,7 @@ private:
     ///< @brief 获取Sprite的原矩形，用于具体绘制
     std::optional<SDL_FRect> getSpriteRect(const Sprite& sprite);
     ///< @brief 判断矩形是否在视口中，用于视口裁剪，AABB碰撞检测，图片与屏幕边缘有偏差就绘制
-    bool isRectInViewport(const SDL_FRect& rect);
+    bool isRectInViewport(const Camera& camera, const SDL_FRect& rect);
 
 private:
     ///< @brief 指向SDL_Renderer，可以为nullptr，不负责其生命周期管理

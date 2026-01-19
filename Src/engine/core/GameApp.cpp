@@ -97,7 +97,37 @@ void GameApp::render()
 
 void GameApp::handleEvents()
 {
-
+    SDL_Event event;
+    // 处理所有待处理的事件
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_EVENT_QUIT:
+                // 用户点击关闭按钮
+                spdlog::info("收到退出事件，关闭游戏");
+                m_IsRunning = false;
+                break;
+            
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                // 窗口关闭请求（Alt+F4 等）
+                spdlog::info("收到窗口关闭请求，关闭游戏");
+                m_IsRunning = false;
+                break;
+            
+            case SDL_EVENT_WINDOW_MINIMIZED:
+                // 窗口最小化
+                spdlog::debug("窗口已最小化");
+                break;
+            
+            case SDL_EVENT_WINDOW_RESTORED:
+                // 窗口恢复
+                spdlog::debug("窗口已恢复");
+                break;
+            
+            default:
+                // 其他事件可以在这里处理
+                break;
+        }
+    }
 }
 
 void GameApp::close()
@@ -241,7 +271,19 @@ void GameApp::testRenderer()
 
 void GameApp::testCamera()
 {
-    spdlog::debug("测试Camera");
+    auto keyState = SDL_GetKeyboardState(nullptr);
+    if(keyState[SDL_SCANCODE_UP]){
+        m_upCamera->move(glm::vec2(0.0f, -10.0f));
+    }
+    if(keyState[SDL_SCANCODE_DOWN]){
+        m_upCamera->move(glm::vec2(0.0f, 10.0f));
+    }
+    if(keyState[SDL_SCANCODE_LEFT]){
+        m_upCamera->move(glm::vec2(-10.0f, 0.0f));
+    }
+    if(keyState[SDL_SCANCODE_RIGHT]){
+        m_upCamera->move(glm::vec2(10.0f, 0.0f));
+    }
 }
 
 }

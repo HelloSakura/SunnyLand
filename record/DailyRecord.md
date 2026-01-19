@@ -114,6 +114,10 @@ renderer.draw(Camera&, Sprite&)
 实现：带有视差剪辑的世界坐标转屏幕坐标
 
 
+## 1/19
 
+做视差滚动变换时，当pos_screen.x的坐标变成0时，start_pos.x会变成负数
+start_pos.x = glm::mod(pos_screen.x, view_size.x) - tex_scale_w;
+stop_pos.x = view_size.x;
 
 
