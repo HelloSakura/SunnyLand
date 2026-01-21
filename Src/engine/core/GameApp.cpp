@@ -59,8 +59,6 @@ void GameApp::run()
         handleEvents();
         update(deltaTime);;
         render();
-        SDL_DelayNS(static_cast<Uint64>(engine::utils::RandomUtils::getInstance().randomDoubleInRange(0, 300) * 1000000.0));
-        spdlog::trace("frame_index:{} delta_time:{}", m_frameIndex, deltaTime);
         m_frameIndex++;
     }
 
