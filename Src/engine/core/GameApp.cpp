@@ -11,7 +11,7 @@
 
 
 #include "GameApp.h"
-
+#include "Config.h"
 
 #include "SDL3/SDL_render.h"
 #include "engine/core/XTime.h"
@@ -69,6 +69,7 @@ bool GameApp::init()
 {
     // 初始化日志系统（必须在其他日志输出之前调用）
     spdlog::trace("GameApp 初始化开始");
+    if(!initConfig()) return false;
     if(!initSDL()) return false;
     if(!initTime()) return false;
     if(!initResourceManager()) return false;
@@ -101,24 +102,24 @@ void GameApp::handleEvents()
         switch (event.type) {
             case SDL_EVENT_QUIT:
                 // 用户点击关闭按钮
-                spdlog::info("收到退出事件，关闭游戏");
+                spdlog::trace("收到退出事件，关闭游戏");
                 m_IsRunning = false;
                 break;
             
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                 // 窗口关闭请求（Alt+F4 等）
-                spdlog::info("收到窗口关闭请求，关闭游戏");
+                spdlog::trace("收到窗口关闭请求，关闭游戏");
                 m_IsRunning = false;
                 break;
             
             case SDL_EVENT_WINDOW_MINIMIZED:
                 // 窗口最小化
-                spdlog::debug("窗口已最小化");
+                spdlog::trace("窗口已最小化");
                 break;
             
             case SDL_EVENT_WINDOW_RESTORED:
                 // 窗口恢复
-                spdlog::debug("窗口已恢复");
+                spdlog::trace("窗口已恢复");
                 break;
             
             default:
@@ -154,6 +155,20 @@ void GameApp::close()
     spdlog::trace("GameApp 关闭完成");
 }
 
+
+bool GameApp::initConfig()
+{
+    try{
+        m_upConfig = std::make_unique<Config>(engine::utils::PathUtils::getResourcePath("assets/config.json"));
+    }
+    catch(const std::exception& e){
+        spdlog::error("Config 初始化失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("Config 初始化成功");
+    return true;
+}
+
 bool GameApp::initSDL() 
 {
     //初始化SDL
@@ -163,7 +178,7 @@ bool GameApp::initSDL()
     }
     
     //创建窗口
-    m_pWindow = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
+    m_pWindow = SDL_CreateWindow(m_upConfig->windowTitle.c_str(), m_upConfig->windowWidth, m_upConfig->windowHeight, SDL_WINDOW_RESIZABLE);
     if(nullptr == m_pWindow){
         spdlog::error("窗口创建失败: {}", SDL_GetError());
         return false;
@@ -178,8 +193,13 @@ bool GameApp::initSDL()
     }
     spdlog::trace("渲染器创建成功");
 
+    //设置VSync模式
+    int vsync_mode = m_upConfig->vsyncEnabled ? SDL_RENDERER_VSYNC_ADAPTIVE : SDL_RENDERER_VSYNC_DISABLED;
+    SDL_SetRenderVSync(m_pRenderer, vsync_mode);
+    spdlog::trace("VSync 设置为: {}", m_upConfig->vsyncEnabled ? "Enabled" : "Disabled");
+
     //设置逻辑分辨率
-    SDL_SetRenderLogicalPresentation(m_pRenderer, 640, 360, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+    SDL_SetRenderLogicalPresentation(m_pRenderer, m_upConfig->windowWidth/2, m_upConfig->windowHeight/2, SDL_LOGICAL_PRESENTATION_LETTERBOX);
     spdlog::trace("SDL 初始化成功");
     return true;
 }
@@ -188,10 +208,13 @@ bool GameApp::initTime()
 {
     try{
         m_upTimeComponent = std::make_unique<XTime>();
-    }catch(const std::exception& e){
+    }
+    catch(const std::exception& e){
         spdlog::error("XTime 初始化失败: {}", e.what());
         return false;
     }
+
+    m_upTimeComponent->setTargetFps(m_upConfig->frameRate);
     spdlog::trace("XTime 初始化成功");
     return true;
 }
@@ -253,7 +276,6 @@ void GameApp::testResourceManager()
 
 void GameApp::testRenderer()
 {
-    spdlog::debug("测试Renderer");
     // 使用 PathUtils 获取资源路径，确保跨平台兼容性
     engine::render::Sprite sprite_frog(engine::utils::PathUtils::getResourcePath("assets/textures/Actors/frog.png"));
     engine::render::Sprite sprite_ui(engine::utils::PathUtils::getResourcePath("assets/textures/UI/buttons/Start1.png"));

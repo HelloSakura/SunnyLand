@@ -15,6 +15,7 @@ public:
     std::string windowTitle = "SunnyLand";
     int windowWidth = 1280;
     int windowHeight = 720;
+    bool windowResizable = true;
 
     //图形设置
     bool vsyncEnabled = false;

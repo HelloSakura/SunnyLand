@@ -69,7 +69,7 @@ void Renderer::drawSprite(const Camera& camera, const Sprite& sprite, const glm:
     if(!SDL_RenderTextureRotated(m_pRenderer, pTexture, &src_rect.value(), &dst_rect, angle, nullptr, sprite.isFlipX() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)){
         spdlog::error("绘制精灵失败: ID:{}, 错误: {}", sprite.getTextureID(), SDL_GetError());
     }
-    spdlog::debug("绘制精灵成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {}), 旋转: {}", sprite.getTextureID(), screen_pos.x, screen_pos.y, scale.x, scale.y, angle);
+    //spdlog::debug("绘制精灵成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {}), 旋转: {}", sprite.getTextureID(), screen_pos.x, screen_pos.y, scale.x, scale.y, angle);
 }
 
 void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const glm::vec2& position, const glm::vec2& scrollFactor, const glm::bvec2& repeat, const glm::vec2& scale)
@@ -84,7 +84,7 @@ void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const gl
         spdlog::error("绘制精灵失败，矩形区域未获取: {}", sprite.getTextureID());
         return;
     }
-    spdlog::debug("获取矩形区域成功: ID:{}, 矩形区域: ({}, {}, {}, {})", sprite.getTextureID(), src_rect.value().x, src_rect.value().y, src_rect.value().w, src_rect.value().h);
+    //spdlog::debug("获取矩形区域成功: ID:{}, 矩形区域: ({}, {}, {}, {})", sprite.getTextureID(), src_rect.value().x, src_rect.value().y, src_rect.value().w, src_rect.value().h);
     //应用相机变换，需要考虑视差滚动因子
     //得到的是什么？？
     glm::vec2 pos_screen = camera.worldToScreenWithParallax(position, scrollFactor);
@@ -116,8 +116,8 @@ void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const gl
         stop_pos.y = glm::min(pos_screen.y + tex_scale_h, view_size.y);
     }
     
-    spdlog::info("view_size: ({}, {}), pos_screen: ({}, {}), tex_scale: ({}, {})", view_size.x, view_size.y, pos_screen.x, pos_screen.y, tex_scale_w, tex_scale_h);
-    spdlog::info("start_pos: ({}, {}), stop_pos: ({}, {})", start_pos.x, start_pos.y, stop_pos.x, stop_pos.y);
+    spdlog::debug("view_size: ({}, {}), pos_screen: ({}, {}), tex_scale: ({}, {})", view_size.x, view_size.y, pos_screen.x, pos_screen.y, tex_scale_w, tex_scale_h);
+    spdlog::debug("start_pos: ({}, {}), stop_pos: ({}, {})", start_pos.x, start_pos.y, stop_pos.x, stop_pos.y);
     
     for(float y = start_pos.y; y < stop_pos.y; y += tex_scale_h){
         for(float x = start_pos.x; x < stop_pos.x; x += tex_scale_w){
@@ -127,7 +127,7 @@ void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const gl
             }
         }
     }
-    spdlog::debug("绘制视差滚动背景成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {})", sprite.getTextureID(), start_pos.x, start_pos.y, scrollFactor.x, scrollFactor.y);
+    //spdlog::debug("绘制视差滚动背景成功: ID:{}, 位置: ({}, {}), 缩放: ({}, {})", sprite.getTextureID(), start_pos.x, start_pos.y, scrollFactor.x, scrollFactor.y);
 }
 
 //画UI，不需要进行精灵图转换，UI始终在屏幕中固定的位置上绘制
@@ -157,7 +157,7 @@ void Renderer::drawUISprite(const Sprite& sprite, const glm::vec2& position, con
     if(!SDL_RenderTexture(m_pRenderer, pTexture, &src_rect.value(), &dst_rect)){
         spdlog::error("绘制精灵失败: ID:{}, 错误: {}", sprite.getTextureID(), SDL_GetError());
     }
-    spdlog::debug("绘制UI精灵成功: ID:{}, 位置: ({}, {})", sprite.getTextureID(), position.x, position.y);
+    //spdlog::debug("绘制UI精灵成功: ID:{}, 位置: ({}, {})", sprite.getTextureID(), position.x, position.y);
 }
 
 void Renderer::present()

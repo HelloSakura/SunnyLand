@@ -36,7 +36,7 @@ SDL_Texture* TextureManager::loadTexture(const std::string& path)
         return nullptr;
     }
     m_textureMap.emplace(path, std::unique_ptr<SDL_Texture, SDLTextureDeleter>(pTexture));
-    spdlog::debug("加载图片成功: {}", path);
+    //spdlog::debug("加载图片成功: {}", path);
     return pTexture;   
 }
 
@@ -44,7 +44,7 @@ SDL_Texture* TextureManager::tryGetTexture(const std::string& path)
 {
     auto it = m_textureMap.find(path);
     if(it != m_textureMap.end()){
-        spdlog::debug("获取图片成功: {}", path);
+        //spdlog::debug("获取图片成功: {}", path);
         return it->second.get();
     }
     return loadTexture(path);

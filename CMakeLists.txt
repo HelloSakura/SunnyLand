@@ -43,6 +43,8 @@ add_executable(${PROJECT_NAME}
     src/engine/core/GameApp.h
     src/engine/core/XTime.cpp
     src/engine/core/XTime.h
+    src/engine/core/Config.cpp
+    src/engine/core/Config.h
 
     src/engine/utils/LoggerUtil.cpp 
     src/engine/utils/LoggerUtil.h

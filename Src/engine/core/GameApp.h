@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "Config.h"
 #include<memory>
 
 
@@ -30,6 +31,7 @@ namespace engine::render{
 namespace engine::core {  //命名空间：保持路径结构清晰，避免命名冲突
 
 class XTime;
+class Config;
 
 /**
  * @brief 游戏应用类
@@ -58,6 +60,7 @@ private:
     void render();
 
     //引擎组件初始化
+    [[nodiscard]] bool initConfig();
     [[nodiscard]] bool initSDL();
     [[nodiscard]] bool initTime();
     [[nodiscard]] bool initResourceManager();
@@ -78,6 +81,7 @@ private:
     int m_frameIndex = 0;
 
     //引擎组件
+    std::unique_ptr<Config> m_upConfig;
     std::unique_ptr<XTime> m_upTimeComponent;
     std::unique_ptr<engine::resource::ResourceManager> m_upResourceManager;
     std::unique_ptr<engine::render::Renderer> m_upRenderer;
