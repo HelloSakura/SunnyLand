@@ -11,6 +11,9 @@
 
 #ifdef _WIN32
     #include <windows.h>
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
+    #include <limits.h>
 #else
     #include <unistd.h>
     #include <limits.h>
@@ -36,6 +39,19 @@ std::string PathUtils::getExecutableDirectory() {
         size_t lastSlash = exePath.find_last_of("\\/");
         if (lastSlash != std::string::npos) {
             exePath = exePath.substr(0, lastSlash + 1);
+        }
+    }
+#elif defined(__APPLE__)
+    char buffer[PATH_MAX];
+    uint32_t size = PATH_MAX;
+    if (_NSGetExecutablePath(buffer, &size) == 0) {
+        char resolved[PATH_MAX];
+        if (realpath(buffer, resolved) != nullptr) {
+            exePath = resolved;
+            size_t lastSlash = exePath.find_last_of("/");
+            if (lastSlash != std::string::npos) {
+                exePath = exePath.substr(0, lastSlash + 1);
+            }
         }
     }
 #else
