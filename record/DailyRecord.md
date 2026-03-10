@@ -121,3 +121,8 @@ start_pos.x = glm::mod(pos_screen.x, view_size.x) - tex_scale_w;
 stop_pos.x = view_size.x;
 
 
+## 1/21
+
+配置组件
+关键方法：toJson, FromJson
+读取json初始化程序的一些配置，加了配置需要加入对应的处理逻辑
