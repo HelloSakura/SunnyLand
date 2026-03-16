@@ -8,8 +8,6 @@
  * @copyright Copyright (c) 2025
  */
 
-
-
 #include "GameApp.h"
 #include "Config.h"
 

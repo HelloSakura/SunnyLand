@@ -126,3 +126,9 @@ stop_pos.x = view_size.x;
 配置组件
 关键方法：toJson, FromJson
 读取json初始化程序的一些配置，加了配置需要加入对应的处理逻辑
+
+
+## 3/16
+
+<img src = "Images/2026-03-16-13-09-30.png" width = "500"/>
+
