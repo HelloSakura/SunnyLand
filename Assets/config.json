@@ -8,7 +8,7 @@
 
   "graphics": {
     "vsync": false,
-    "frame_rate": 60
+    "frame_rate": 144
   },
 
   "audio": {

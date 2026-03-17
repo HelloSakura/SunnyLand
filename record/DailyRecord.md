@@ -5,37 +5,34 @@
 ### Record
 
 1. **编译**
-踩坑SDL_Mixer编译环节，不清楚cmakeList是如何运作的
-对于大型文件的编译不了解
+   踩坑SDL_Mixer编译环节，不清楚cmakeList是如何运作的
+   对于大型文件的编译不了解
 
 下载文件包进行编译，但是安装不是标准路径
-
 
 2. **Spdlog**
 
 C++游戏开发日志库标配
 
-
 ## 12/25
 
 clangd + llvm 语言服务器
+
 1. 需要安装clangd和llvm
 2. 需要配置setting.json，配置clangd开启和参数
 3. 需要配置compile_commands.json记录每个源文件如何被编译，clangd通过该文件获取准确的编译命令
 
-
 ## 12/28
-
 
 ### 游戏架构设计
 
 **组件模式**
 
 组件通常在定义游戏实体的核心部分中使用，但它们在其他地方也有用。 这个模式应用在在如下情况中：
+
 1. 有一个涉及了多个领域的类，而你想保持这些领域互相隔离。
 2. 一个类正在变大而且越来越难以使用。
 3. 想要能定义一系列分享不同能力的类，但是使用继承无法让你精确选取要重用的部分
-
 
 **游戏分层架构**
 
@@ -43,7 +40,6 @@ clangd + llvm 语言服务器
 2. 游戏逻辑层
 3. 引擎核心层
 4. 平台抽象层
-
 
 ![](PasteImg/2025-12-28-23-12-31.png)
 ![](PasteImg/2025-12-28-10-15-16.png)
@@ -65,11 +61,9 @@ T& operator=(T&&) noexcept — 移动赋值运算符
 如果类直接管理资源（非 RAII 类型），实现一个通常需要实现全部五个以确保拷贝/移动/销毁语义正确，避免双重释放或资源泄漏。
 现代 C++ 推荐使用 Rule of Zero：用智能指针（std::unique_ptr/std::shared_ptr）或容器来管理资源，这样通常不需要自己实现这五个函数。
 
-
 **更优选择： Rule of Zero**
 
 本身不应该直接管理资源，依赖标准库提供的RAII(Resource Acquisition Is Initialization)类型
-
 
 ## 12/30
 
@@ -78,7 +72,6 @@ T& operator=(T&&) noexcept — 移动赋值运算符
 #### 帧率控制
 
 帧率控制：限定每帧的时间，CPU过快的时候，如果两帧之间的时间太短，余下时间进行等待
-
 
 ## 1/6
 
@@ -93,7 +86,6 @@ T& operator=(T&&) noexcept — 移动赋值运算符
 
 剩下的无非是用哪个库去实现具体细节的问题
 
-
 ## 1/7
 
 渲染图片三个模块：渲染器、纹理、相机
@@ -101,18 +93,15 @@ render由两个Sprite和Camera组合使用
 
 renderer.draw(Camera&, Sprite&)
 
-
 ## 1/11
 
 什么是视差裁剪？
 在屏幕空间判断哪些像素实际上是不可见的（被其他凸起部分遮挡），从而提前终止这些像素的着色计算。
 
-
 关于Sprite：只记录Sprite的一些基本信息，对应的资源ID，绘制大小等等
 关于Camera：相当于玩家视角
 
 实现：带有视差剪辑的世界坐标转屏幕坐标
-
 
 ## 1/19
 
@@ -120,15 +109,14 @@ renderer.draw(Camera&, Sprite&)
 start_pos.x = glm::mod(pos_screen.x, view_size.x) - tex_scale_w;
 stop_pos.x = view_size.x;
 
-
 ## 1/21
 
 配置组件
 关键方法：toJson, FromJson
 读取json初始化程序的一些配置，加了配置需要加入对应的处理逻辑
 
-
 ## 3/16
 
 <img src = "Images/2026-03-16-13-09-30.png" width = "500"/>
 
+屏幕坐标和逻辑坐标的区别

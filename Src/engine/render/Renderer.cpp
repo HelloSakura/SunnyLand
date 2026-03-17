@@ -116,8 +116,8 @@ void Renderer::drawParallax(const Camera& camera, const Sprite& sprite, const gl
         stop_pos.y = glm::min(pos_screen.y + tex_scale_h, view_size.y);
     }
     
-    spdlog::debug("view_size: ({}, {}), pos_screen: ({}, {}), tex_scale: ({}, {})", view_size.x, view_size.y, pos_screen.x, pos_screen.y, tex_scale_w, tex_scale_h);
-    spdlog::debug("start_pos: ({}, {}), stop_pos: ({}, {})", start_pos.x, start_pos.y, stop_pos.x, stop_pos.y);
+    //spdlog::debug("view_size: ({}, {}), pos_screen: ({}, {}), tex_scale: ({}, {})", view_size.x, view_size.y, pos_screen.x, pos_screen.y, tex_scale_w, tex_scale_h);
+    //spdlog::debug("start_pos: ({}, {}), stop_pos: ({}, {})", start_pos.x, start_pos.y, stop_pos.x, stop_pos.y);
     
     for(float y = start_pos.y; y < stop_pos.y; y += tex_scale_h){
         for(float x = start_pos.x; x < stop_pos.x; x += tex_scale_w){
