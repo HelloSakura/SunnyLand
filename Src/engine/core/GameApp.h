@@ -28,6 +28,10 @@ namespace engine::render{
     class Camera;
 }
 
+namespace engine::input{
+    class InputManager;
+}
+
 namespace engine::core {  //命名空间：保持路径结构清晰，避免命名冲突
 
 class XTime;
@@ -66,12 +70,14 @@ private:
     [[nodiscard]] bool initResourceManager();
     [[nodiscard]] bool initRenderer();
     [[nodiscard]] bool initCamera();
+    [[nodiscard]] bool initInputManager();
 
 
     //测试函数
     void testResourceManager();
     void testRenderer();
     void testCamera();
+    void testInputManager();
 
 
 private:
@@ -86,5 +92,6 @@ private:
     std::unique_ptr<engine::resource::ResourceManager> m_upResourceManager;
     std::unique_ptr<engine::render::Renderer> m_upRenderer;
     std::unique_ptr<engine::render::Camera> m_upCamera;
+    std::unique_ptr<engine::input::InputManager> m_upInputManager;
 };
 }

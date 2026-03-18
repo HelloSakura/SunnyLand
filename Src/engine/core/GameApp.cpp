@@ -18,6 +18,7 @@
 #include "engine/resource/ResourceManager.h"
 #include "engine/render/Renderer.h"
 #include "engine/render/Camera.h"
+#include "engine/input/InputManager.h"
 
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
@@ -53,6 +54,7 @@ void GameApp::run()
     while(m_IsRunning){
         m_upTimeComponent->update();
         double deltaTime = m_upTimeComponent->getDeltaTime();
+        m_upInputManager->update();   //每帧首先更新输入
 
         handleEvents();
         update(deltaTime);;
@@ -73,6 +75,7 @@ bool GameApp::init()
     if(!initResourceManager()) return false;
     if(!initRenderer()) return false;
     if(!initCamera()) return false;
+    if(!initInputManager()) return false;
     spdlog::trace("GameApp 初始化成功");
 
     m_IsRunning = true;
@@ -81,7 +84,7 @@ bool GameApp::init()
 
 void GameApp::update(double deltaTime)
 {
-    testCamera();
+    
 }
 
 
@@ -94,6 +97,14 @@ void GameApp::render()
 
 void GameApp::handleEvents()
 {
+    if(m_upInputManager->shouldQuit()){
+        m_IsRunning = false;
+        return;
+    }
+
+    testInputManager();
+
+/*  使用inputmanager 替代SDL事件处理
     SDL_Event event;
     // 处理所有待处理的事件
     while (SDL_PollEvent(&event)) {
@@ -125,6 +136,7 @@ void GameApp::handleEvents()
                 break;
         }
     }
+*/
 }
 
 void GameApp::close()
@@ -254,6 +266,18 @@ bool GameApp::initCamera()
 }
 
 
+bool GameApp::initInputManager()
+{
+    try{
+        m_upInputManager = std::make_unique<engine::input::InputManager>(m_pRenderer, m_upConfig.get());
+    }catch(const std::exception& e){
+        spdlog::error("InputManager 初始化失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("InputManager 初始化成功");
+    return true;
+}
+
 
 void GameApp::testResourceManager()
 {
@@ -301,6 +325,33 @@ void GameApp::testCamera()
     }
     if(keyState[SDL_SCANCODE_RIGHT]){
         m_upCamera->move(glm::vec2(10.0f, 0.0f));
+    }
+}
+
+void GameApp::testInputManager()
+{
+    std::vector<std::string> actions = {
+        "move_up", 
+        "move_down", 
+        "move_left", 
+        "move_right",
+        "jump",
+        "attack",
+        "pause",
+        "mouse_left_click",
+        "mouse_right_click",
+    };
+
+    for(const std::string& action : actions){
+        if(m_upInputManager->isActionDown(action)){
+            spdlog::trace("{} 持续按下", action);
+        }
+        if(m_upInputManager->isActionPressed(action)){
+            spdlog::trace("{} 被按下", action);
+        }
+        if(m_upInputManager->isActionReleased(action)){
+            spdlog::trace("{} 被释放", action);
+        }
     }
 }
 

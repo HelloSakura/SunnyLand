@@ -1,6 +1,5 @@
 #include "Config.h"
 #include <fstream>
-#include <stdexcept>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
@@ -14,6 +13,70 @@ Config::Config(const std::string& configPath)
 Config::~Config()
 {
     //保存配置到文件
+}
+
+// -------------------------
+// Getter / Setter
+// -------------------------
+
+const std::string& Config::getWindowTitle() const
+{
+    return windowTitle;
+}
+
+int Config::getWindowWidth() const
+{
+    return windowWidth;
+}
+
+int Config::getWindowHeight() const
+{
+    return windowHeight;
+}
+
+bool Config::isVsyncEnabled() const
+{
+    return vsyncEnabled;
+}
+
+int Config::getFrameRate() const
+{
+    return frameRate;
+}
+
+float Config::getSoundVolume() const
+{
+    return soundVolume;
+}
+
+float Config::getMusicVolume() const
+{
+    return musicVolume;
+}
+
+const std::unordered_map<std::string, std::vector<std::string>>& Config::getInputBindings() const
+{
+    return inputBindings;
+}
+
+void Config::setWindowTitle(const std::string& title)
+{
+    windowTitle = title;
+}
+
+void Config::setWindowWidth(int width)
+{
+    windowWidth = width;
+}
+
+void Config::setWindowHeight(int height)
+{
+    windowHeight = height;
+}
+
+void Config::setVsyncEnabled(bool enabled)
+{
+    vsyncEnabled = enabled;
 }
 
 bool Config::loadFromFile(const std::string& filePath)

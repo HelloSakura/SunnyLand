@@ -46,6 +46,9 @@ add_executable(${PROJECT_NAME}
     src/engine/core/Config.cpp
     src/engine/core/Config.h
 
+    src/engine/input/InputManager.cpp
+    src/engine/input/InputManager.h
+
     src/engine/utils/LoggerUtil.cpp 
     src/engine/utils/LoggerUtil.h
     src/engine/utils/RandomUtils.cpp
@@ -96,6 +99,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/resource
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/render
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/input
 )
 
 # 确保 resource 目录被包含在所有编译命令中（包括 compile_commands.json）
