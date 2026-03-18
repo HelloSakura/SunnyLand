@@ -120,3 +120,9 @@ stop_pos.x = view_size.x;
 <img src = "Images/2026-03-16-13-09-30.png" width = "500"/>
 
 屏幕坐标和逻辑坐标的区别
+
+inputManager
+
+- 在所有其它组件更新前 进行刷新 （其它组件需要用到它的状态）
+- 绑定的是 action_to_key_str 和 code_to_action的方式组织起来，为什么要采用这种方式
+- 记录当下的按键状态（三种），需要维护，更新机制有点意思
